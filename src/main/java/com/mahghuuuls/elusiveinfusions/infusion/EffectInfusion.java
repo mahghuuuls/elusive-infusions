@@ -3,6 +3,7 @@ package com.mahghuuuls.elusiveinfusions.infusion;
 import com.mahghuuuls.elusiveinfusions.Tags;
 import com.mahghuuuls.elusiveinfusions.integration.OptionalEffects;
 import com.mahghuuuls.elusiveinfusions.roster.InfusionSpec;
+import com.mahghuuuls.elusiveinfusions.roster.Tier;
 import com.mahghuuuls.elusiveinfusions.roster.TierValues;
 import com.mahghuuuls.elusiveinfusions.rules.EffectDuration;
 import com.mahghuuuls.everfillingflasks.api.DrinkOutcome;
@@ -26,19 +27,17 @@ final class EffectInfusion extends RosterInfusion {
     private static final String DESCRIPTION_KEY = Tags.MOD_ID + ".effect.description";
     private static final String UNAVAILABLE_KEY = Tags.MOD_ID + ".effect.unavailable";
 
-    private final InfusionSpec spec;
     private final float maximumMultiplier;
 
-    EffectInfusion(InfusionSpec spec, TierValues values, float maximumMultiplier) {
-        super(values);
-        this.spec = spec;
+    EffectInfusion(InfusionSpec spec, Tier tier, TierValues values, float maximumMultiplier) {
+        super(spec, tier, values);
         this.maximumMultiplier = maximumMultiplier;
     }
 
     @Override
     public void onDrinkCompleted(ItemStack infusion, ItemStack flask, EntityPlayer player,
                                  DrinkOutcome outcome) {
-        Potion potion = OptionalEffects.potion(spec);
+        Potion potion = OptionalEffects.potion(spec());
         if (potion == null) {
             return;
         }
@@ -51,9 +50,9 @@ final class EffectInfusion extends RosterInfusion {
 
     @Override
     public ITextComponent effectDescription(ItemStack infusion) {
-        Potion potion = OptionalEffects.potion(spec);
+        Potion potion = OptionalEffects.potion(spec());
         if (potion == null) {
-            return new TextComponentTranslation(UNAVAILABLE_KEY, new TextComponentString(spec.effectId()));
+            return new TextComponentTranslation(UNAVAILABLE_KEY, new TextComponentString(spec().effectId()));
         }
         return new TextComponentTranslation(DESCRIPTION_KEY,
                 new TextComponentTranslation(potion.getName()),

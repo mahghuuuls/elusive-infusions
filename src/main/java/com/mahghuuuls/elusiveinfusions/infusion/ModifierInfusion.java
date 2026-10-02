@@ -1,6 +1,8 @@
 package com.mahghuuuls.elusiveinfusions.infusion;
 
 import com.mahghuuuls.elusiveinfusions.roster.Channel;
+import com.mahghuuuls.elusiveinfusions.roster.InfusionSpec;
+import com.mahghuuuls.elusiveinfusions.roster.Tier;
 import com.mahghuuuls.elusiveinfusions.roster.TierValues;
 import com.mahghuuuls.everfillingflasks.api.FlaskBonuses;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +22,8 @@ final class ModifierInfusion extends RosterInfusion {
     private final Channel[] channels;
     private final float[] percents;
 
-    ModifierInfusion(TierValues values) {
-        super(values);
+    ModifierInfusion(InfusionSpec spec, Tier tier, TierValues values) {
+        super(spec, tier, values);
         Map<Channel, Double> bonuses = values.bonuses();
         channels = new Channel[bonuses.size()];
         percents = new float[bonuses.size()];

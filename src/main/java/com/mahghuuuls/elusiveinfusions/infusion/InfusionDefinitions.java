@@ -14,8 +14,8 @@ public final class InfusionDefinitions {
 
     public static InfusionDefinition create(InfusionSpec spec, Tier tier) {
         if (spec.kind() == Kind.MODIFIER) {
-            return new ModifierInfusion(spec.values(tier));
+            return new ModifierInfusion(spec, tier, spec.values(tier));
         }
-        return new EffectInfusion(spec, spec.values(tier), EffectDuration.DEFAULT_MAXIMUM);
+        return new EffectInfusion(spec, tier, spec.values(tier), EffectDuration.DEFAULT_MAXIMUM);
     }
 }

@@ -25,7 +25,8 @@ class ModifierInfusionTest {
         Roster roster = Roster.parse(new StringReader(HEADER
                 + "all,All,modifier,yes,,,1xp,4,healing:+0.11;drink_speed:-0.22;hit_resistance:+0.33;"
                 + "recharge_speed:-0.44;effect_power:+0.55,,,,,,,\n"));
-        ModifierInfusion infusion = new ModifierInfusion(roster.family("all").values(Tier.STANDARD));
+        ModifierInfusion infusion = new ModifierInfusion(roster.family("all"), Tier.STANDARD,
+                roster.family("all").values(Tier.STANDARD));
         FlaskBonuses bonuses = new FlaskBonuses();
 
         infusion.contribute(null, null, bonuses);
@@ -43,7 +44,8 @@ class ModifierInfusionTest {
     void twoCopiesAddUp() throws IOException {
         Roster roster = Roster.parse(new StringReader(HEADER
                 + "tide,Tide,modifier,no,,,1xp,2,healing:+0.10,,,,,,,\n"));
-        ModifierInfusion infusion = new ModifierInfusion(roster.family("tide").values(Tier.STANDARD));
+        ModifierInfusion infusion = new ModifierInfusion(roster.family("tide"), Tier.STANDARD,
+                roster.family("tide").values(Tier.STANDARD));
         FlaskBonuses bonuses = new FlaskBonuses();
 
         infusion.contribute(null, null, bonuses);
