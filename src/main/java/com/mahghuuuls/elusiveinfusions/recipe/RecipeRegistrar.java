@@ -5,8 +5,10 @@ import com.mahghuuuls.elusiveinfusions.Tags;
 import com.mahghuuuls.elusiveinfusions.config.InfusionConfig;
 import com.mahghuuuls.elusiveinfusions.config.InfusionValues;
 import com.mahghuuuls.elusiveinfusions.item.ItemInfusion;
+import com.mahghuuuls.elusiveinfusions.integration.OptionalEffects;
 import com.mahghuuuls.elusiveinfusions.item.ModItems;
 import com.mahghuuuls.elusiveinfusions.roster.PlantCount;
+import com.mahghuuuls.elusiveinfusions.roster.Roster;
 import com.mahghuuuls.elusiveinfusions.roster.Tier;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -29,7 +31,9 @@ import java.util.List;
  * <p>A standard infusion is a Blank Infusor plus its plants. A Concentrated infusion is the
  * standard infusion of the same family plus its plants. Each recipe is registered under the
  * registry name of the item it makes; those names must stay stable across releases. A recipe
- * switched off in the configuration is simply not registered, so no viewer or journal shows it.
+ * switched off in the configuration is simply not registered, so no viewer or journal shows it;
+ * so is an effect infusion whose effect is not registered. Potions register before recipes, which
+ * is why the effect check happens here and not when the items register.
  */
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class RecipeRegistrar {
@@ -49,9 +53,13 @@ public final class RecipeRegistrar {
                     .setRegistryName(blank.getRegistryName()));
         }
 
+        OptionalEffects.resolve(Roster.bundled());
         int registered = 0;
         for (ItemInfusion item : ModItems.infusions()) {
             if (!values.recipeEnabled(item.getRegistryName().getPath())) {
+                continue;
+            }
+            if (!OptionalEffects.recipeAllowed(item.spec())) {
                 continue;
             }
             Item base = item.tier() == Tier.STANDARD

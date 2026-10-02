@@ -54,7 +54,7 @@ item.elusiveinfusions.rootbound_infusion.name=Rootbound Infusion
 item.elusiveinfusions.concentrated_rootbound_infusion.name=Concentrated Rootbound Infusion
 
 elusiveinfusions.effect.description=%s %s for %ss
-elusiveinfusions.effect.unavailable=Needs an effect that is not installed: %s
+elusiveinfusions.effect.unavailable=Its effect is not available in this game: %s
 
 itemGroup.elusiveinfusions=Elusive Infusions
 
