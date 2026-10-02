@@ -9,9 +9,6 @@ package com.mahghuuuls.elusiveinfusions.rules;
  */
 public final class EffectDuration {
 
-    /** The shipped maximum multiplier: an effect lasts at most twice its base duration. */
-    public static final float DEFAULT_MAXIMUM = 2.0F;
-
     private static final int TICKS_PER_SECOND = 20;
 
     private EffectDuration() {

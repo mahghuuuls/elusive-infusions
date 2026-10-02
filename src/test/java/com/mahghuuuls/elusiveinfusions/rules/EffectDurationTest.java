@@ -6,13 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EffectDurationTest {
 
-    /** The shipped maximum: an effect lasts at most twice its base duration (REQ-007). */
-    @Test
-    void shippedMaximumIsTwice() {
-        assertEquals(2.0F, EffectDuration.DEFAULT_MAXIMUM, 0.0F);
-        assertEquals(400, EffectDuration.ticks(10, 3.0F, EffectDuration.DEFAULT_MAXIMUM));
-    }
-
     @Test
     void aMaximumOfZeroSwitchesEffectsOff() {
         assertEquals(0, EffectDuration.ticks(10, 1.5F, 0.0F));

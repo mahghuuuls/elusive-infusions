@@ -1,6 +1,8 @@
 package com.mahghuuuls.elusiveinfusions.item;
 
 import com.mahghuuuls.elusiveinfusions.Tags;
+import com.mahghuuuls.elusiveinfusions.config.InfusionConfig;
+import com.mahghuuuls.elusiveinfusions.config.InfusionValues;
 import com.mahghuuuls.elusiveinfusions.infusion.InfusionDefinitions;
 import com.mahghuuuls.elusiveinfusions.integration.OptionalEffects;
 import com.mahghuuuls.elusiveinfusions.roster.InfusionSpec;
@@ -24,7 +26,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class ModItems {
 
-    public static final String BLANK_INFUSOR_PATH = "blank_infusor";
+    public static final String BLANK_INFUSOR_PATH = InfusionValues.BLANK_INFUSOR;
 
     private static final List<ItemInfusion> INFUSIONS = new ArrayList<ItemInfusion>();
     private static Item blankInfusor;
@@ -40,6 +42,7 @@ public final class ModItems {
                 .setCreativeTab(CreativeTabs.MISC);
         event.getRegistry().register(blankInfusor);
 
+        InfusionValues values = InfusionConfig.current();
         for (InfusionSpec spec : Roster.bundled().specs()) {
             if (!OptionalEffects.exists(spec)) {
                 continue;
@@ -52,7 +55,7 @@ public final class ModItems {
                 item.setCreativeTab(CreativeTabs.MISC);
                 INFUSIONS.add(item);
                 event.getRegistry().register(item);
-                FlaskApi.registerInfusion(item, InfusionDefinitions.create(spec, tier));
+                FlaskApi.registerInfusion(item, InfusionDefinitions.create(spec, tier, values));
             }
         }
     }

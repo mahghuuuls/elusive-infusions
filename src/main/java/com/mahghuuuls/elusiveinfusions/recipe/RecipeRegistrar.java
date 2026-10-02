@@ -2,6 +2,8 @@ package com.mahghuuuls.elusiveinfusions.recipe;
 
 import com.mahghuuuls.elusiveinfusions.ElusiveInfusionsMod;
 import com.mahghuuuls.elusiveinfusions.Tags;
+import com.mahghuuuls.elusiveinfusions.config.InfusionConfig;
+import com.mahghuuuls.elusiveinfusions.config.InfusionValues;
 import com.mahghuuuls.elusiveinfusions.item.ItemInfusion;
 import com.mahghuuuls.elusiveinfusions.item.ModItems;
 import com.mahghuuuls.elusiveinfusions.roster.PlantCount;
@@ -26,7 +28,8 @@ import java.util.List;
  *
  * <p>A standard infusion is a Blank Infusor plus its plants. A Concentrated infusion is the
  * standard infusion of the same family plus its plants. Each recipe is registered under the
- * registry name of the item it makes; those names must stay stable across releases.
+ * registry name of the item it makes; those names must stay stable across releases. A recipe
+ * switched off in the configuration is simply not registered, so no viewer or journal shows it.
  */
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class RecipeRegistrar {
@@ -39,18 +42,24 @@ public final class RecipeRegistrar {
     @SubscribeEvent
     public static void onRegisterRecipes(RegistryEvent.Register<IRecipe> event) {
         Item blank = ModItems.blankInfusor();
-        event.getRegistry().register(new ShapedOreRecipe(null, new ItemStack(blank),
-                " N ", "NBN", " N ", 'N', "nuggetIron", 'B', Blocks.IRON_BARS)
-                .setRegistryName(blank.getRegistryName()));
+        InfusionValues values = InfusionConfig.current();
+        if (values.recipeEnabled(InfusionValues.BLANK_INFUSOR)) {
+            event.getRegistry().register(new ShapedOreRecipe(null, new ItemStack(blank),
+                    " N ", "NBN", " N ", 'N', "nuggetIron", 'B', Blocks.IRON_BARS)
+                    .setRegistryName(blank.getRegistryName()));
+        }
 
         int registered = 0;
         for (ItemInfusion item : ModItems.infusions()) {
+            if (!values.recipeEnabled(item.getRegistryName().getPath())) {
+                continue;
+            }
             Item base = item.tier() == Tier.STANDARD
                     ? blank
                     : ModItems.infusion(item.spec(), Tier.STANDARD);
             List<Object> inputs = new ArrayList<Object>();
             inputs.add(new ItemStack(base));
-            if (!addPlants(inputs, item)) {
+            if (!addPlants(inputs, item, values)) {
                 continue;
             }
             event.getRegistry().register(new ShapelessOreRecipe(null, new ItemStack(item),
@@ -63,8 +72,8 @@ public final class RecipeRegistrar {
     }
 
     /** Adds one stack per plant needed. False when a plant item is not registered. */
-    private static boolean addPlants(List<Object> inputs, ItemInfusion item) {
-        for (PlantCount plant : item.spec().values(item.tier()).plants()) {
+    private static boolean addPlants(List<Object> inputs, ItemInfusion item, InfusionValues values) {
+        for (PlantCount plant : values.of(item.spec(), item.tier()).plants()) {
             Item plantItem = ForgeRegistries.ITEMS.getValue(
                     new ResourceLocation(PLANT_MOD_ID, plant.plant()));
             if (plantItem == null) {
