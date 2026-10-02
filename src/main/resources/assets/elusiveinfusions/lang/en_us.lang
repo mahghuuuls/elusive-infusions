@@ -52,3 +52,6 @@ item.elusiveinfusions.deepglow_infusion.name=Deepglow Infusion
 item.elusiveinfusions.concentrated_deepglow_infusion.name=Concentrated Deepglow Infusion
 item.elusiveinfusions.rootbound_infusion.name=Rootbound Infusion
 item.elusiveinfusions.concentrated_rootbound_infusion.name=Concentrated Rootbound Infusion
+
+elusiveinfusions.effect.description=%s %s for %ss after a completed drink
+elusiveinfusions.effect.unavailable=Needs an effect that is not installed: %s

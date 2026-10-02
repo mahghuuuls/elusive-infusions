@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
  * <p>The values object is the one source of this infusion's numbers. The methods are also called
  * on the client with a bare stack and no player, so they answer from the values alone.
  */
-class RosterInfusion implements InfusionDefinition {
+abstract class RosterInfusion implements InfusionDefinition {
 
     private final TierValues values;
 
