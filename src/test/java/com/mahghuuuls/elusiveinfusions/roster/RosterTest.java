@@ -288,9 +288,25 @@ class RosterTest {
             lang.load(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
         }
         assertEquals("Blank Infusor", lang.getProperty("item.elusiveinfusions.blank_infusor.name"));
+        assertNotNull(lang.getProperty("elusiveinfusions.journal.blank_infusor"));
+        assertNotNull(lang.getProperty("itemGroup.elusiveinfusions"));
+        for (String key : new String[] {"unique", "stackable", "lastsLonger", "lengthensEffects"}) {
+            assertNotNull(lang.getProperty("elusiveinfusions.tooltip." + key), key);
+        }
+        assertNotNull(lang.getProperty("elusiveinfusions.effect.description"));
+        assertNotNull(lang.getProperty("elusiveinfusions.effect.unavailable"));
         for (InfusionSpec spec : Roster.bundled().specs()) {
             assertEquals(spec.displayName() + " Infusion",
                     lang.getProperty("item.elusiveinfusions." + spec.itemPath(Tier.STANDARD) + ".name"));
+            for (Tier tier : Tier.values()) {
+                if (spec.hasTier(tier)) {
+                    String journal = lang.getProperty("elusiveinfusions.journal." + spec.itemPath(tier));
+                    assertNotNull(journal, spec.itemPath(tier));
+                    assertTrue(journal.contains(spec.unique() ? "Unique" : "Stackable") || tier == Tier.CONCENTRATED, spec.itemPath(tier));
+                    assertFalse(journal.contains(" a A") || journal.contains(" a I") || journal.contains(" a E") || journal.contains(" a O") || journal.contains(" a U"), "article in " + spec.itemPath(tier));
+                    assertTrue(journal.matches("[\\x20-\\x7E]+"), "ASCII only in " + spec.itemPath(tier));
+                }
+            }
             if (spec.hasTier(Tier.CONCENTRATED)) {
                 assertEquals("Concentrated " + spec.displayName() + " Infusion",
                         lang.getProperty("item.elusiveinfusions." + spec.itemPath(Tier.CONCENTRATED) + ".name"));

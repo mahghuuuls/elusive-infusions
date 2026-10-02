@@ -1,5 +1,6 @@
 package com.mahghuuuls.elusiveinfusions.infusion;
 
+import com.mahghuuuls.elusiveinfusions.Tags;
 import com.mahghuuuls.elusiveinfusions.roster.InfusionSpec;
 import com.mahghuuuls.elusiveinfusions.roster.Tier;
 import com.mahghuuuls.elusiveinfusions.roster.TierValues;
@@ -39,6 +40,12 @@ abstract class RosterInfusion implements InfusionDefinition {
     @Override
     public int potencyCost(ItemStack infusion) {
         return values.potencyCost();
+    }
+
+    /** One journal text per item: {@code elusiveinfusions.journal.<item>}. */
+    @Override
+    public String journalText(ItemStack stack) {
+        return Tags.MOD_ID + ".journal." + spec.itemPath(tier);
     }
 
     /** Conflicts are decided by {@link FamilyRules}; another mod's infusion never conflicts here. */

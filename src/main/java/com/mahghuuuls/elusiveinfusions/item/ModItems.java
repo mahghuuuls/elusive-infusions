@@ -5,12 +5,16 @@ import com.mahghuuuls.elusiveinfusions.config.InfusionConfig;
 import com.mahghuuuls.elusiveinfusions.config.InfusionValues;
 import com.mahghuuuls.elusiveinfusions.infusion.InfusionDefinitions;
 import com.mahghuuuls.elusiveinfusions.integration.OptionalEffects;
+import com.mahghuuuls.elusiveinfusions.roster.Channel;
 import com.mahghuuuls.elusiveinfusions.roster.InfusionSpec;
 import com.mahghuuuls.elusiveinfusions.roster.Roster;
 import com.mahghuuuls.elusiveinfusions.roster.Tier;
 import com.mahghuuuls.everfillingflasks.api.FlaskApi;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -31,6 +35,15 @@ public final class ModItems {
     private static final List<ItemInfusion> INFUSIONS = new ArrayList<ItemInfusion>();
     private static Item blankInfusor;
 
+    /** The mod's creative tab, with the Blank Infusor as its icon. */
+    private static final CreativeTabs TAB = new CreativeTabs(Tags.MOD_ID) {
+        @SideOnly(Side.CLIENT)
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(blankInfusor);
+        }
+    };
+
     private ModItems() {
     }
 
@@ -39,8 +52,9 @@ public final class ModItems {
         blankInfusor = new Item()
                 .setRegistryName(BLANK_INFUSOR_PATH)
                 .setTranslationKey(Tags.MOD_ID + "." + BLANK_INFUSOR_PATH)
-                .setCreativeTab(CreativeTabs.MISC);
+                .setCreativeTab(TAB);
         event.getRegistry().register(blankInfusor);
+        FlaskApi.registerJournalItem(blankInfusor, Tags.MOD_ID + ".journal.blank_infusor");
 
         InfusionValues values = InfusionConfig.current();
         for (InfusionSpec spec : Roster.bundled().specs()) {
@@ -51,8 +65,9 @@ public final class ModItems {
                 if (!spec.hasTier(tier)) {
                     continue;
                 }
-                ItemInfusion item = new ItemInfusion(spec, tier);
-                item.setCreativeTab(CreativeTabs.MISC);
+                Double effectPower = values.of(spec, tier).bonuses().get(Channel.EFFECT_POWER);
+                ItemInfusion item = new ItemInfusion(spec, tier, effectPower != null && effectPower > 0);
+                item.setCreativeTab(TAB);
                 INFUSIONS.add(item);
                 event.getRegistry().register(item);
                 FlaskApi.registerInfusion(item, InfusionDefinitions.create(spec, tier, values));
