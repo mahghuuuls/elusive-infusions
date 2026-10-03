@@ -16,13 +16,13 @@ class FamilyRulesTest {
 
     private static final String HEADER = "family,display_name,kind,unique,requires_mod,effect_id,"
             + "std_plants,std_cost,std_bonuses,std_level,std_seconds,"
-            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds\n";
+            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds,color\n";
 
     private static Roster roster() throws IOException {
         return Roster.parse(new StringReader(HEADER
-                + "uniq,Uniq,modifier,yes,,,1xp,3,healing:+0.3,,,1xp,5,healing:+0.5,,\n"
-                + "stack,Stack,modifier,no,,,1xq,2,healing:+0.1,,,1xq,4,healing:+0.2,,\n"
-                + "other,Other,effect,yes,,minecraft:speed,1xr,3,,1,10,1xr,5,,2,10\n"));
+                + "uniq,Uniq,modifier,yes,,,1xp,3,healing:+0.3,,,1xp,5,healing:+0.5,,,#808080\n"
+                + "stack,Stack,modifier,no,,,1xq,2,healing:+0.1,,,1xq,4,healing:+0.2,,,#808080\n"
+                + "other,Other,effect,yes,,minecraft:speed,1xr,3,,1,10,1xr,5,,2,10,#808080\n"));
     }
 
     @Test

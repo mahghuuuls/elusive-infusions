@@ -31,7 +31,7 @@ public final class Roster {
     private static final String[] COLUMNS = {
         "family", "display_name", "kind", "unique", "requires_mod", "effect_id",
         "std_plants", "std_cost", "std_bonuses", "std_level", "std_seconds",
-        "conc_plants", "conc_cost", "conc_bonuses", "conc_level", "conc_seconds"
+        "conc_plants", "conc_cost", "conc_bonuses", "conc_level", "conc_seconds", "color"
     };
 
     private static Roster bundled;
@@ -145,8 +145,9 @@ public final class Roster {
         } else if (!(c.get(12) + c.get(13) + c.get(14) + c.get(15)).isEmpty()) {
             throw new RosterFormatException("Roster line " + line + ": Concentrated values without conc_plants");
         }
+        int color = color(c.get(16), line);
         return new InfusionSpec(family, displayName, kind, unique, requiresMod, effectId,
-                standard, concentrated);
+                standard, concentrated, color);
     }
 
     private static TierValues tier(Kind kind, String plants, String cost, String bonuses, String level,
@@ -221,6 +222,14 @@ public final class Roster {
             }
         }
         return result;
+    }
+
+    /** {@code #rrggbb}, the fixed accent color of the family's icon. */
+    private static int color(String cell, int line) {
+        if (!cell.matches("#[0-9a-f]{6}")) {
+            throw new RosterFormatException("Roster line " + line + ": color '" + cell + "' is not #rrggbb lowercase");
+        }
+        return Integer.parseInt(cell.substring(1), 16);
     }
 
     private static String required(String cell, String column, int line) {

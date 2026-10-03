@@ -1,6 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "elusiveinfusions:items/infusion"
+        "layer0": "elusiveinfusions:items/blank_infusor",
+        "layer1": "elusiveinfusions:items/infusion_fill"
     }
 }

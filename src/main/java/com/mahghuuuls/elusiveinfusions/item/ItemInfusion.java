@@ -51,6 +51,13 @@ public final class ItemInfusion extends Item implements InfusionIdentity {
         return tier;
     }
 
+    /** A Concentrated infusion shows the enchantment glint: its second cue beside the color. */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+        return tier == Tier.CONCENTRATED;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip,

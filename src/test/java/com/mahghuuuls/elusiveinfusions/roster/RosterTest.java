@@ -22,7 +22,7 @@ class RosterTest {
 
     private static final String HEADER = "family,display_name,kind,unique,requires_mod,effect_id,"
             + "std_plants,std_cost,std_bonuses,std_level,std_seconds,"
-            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds\n";
+            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds,color\n";
 
     private static Roster parse(String rows) throws IOException {
         return Roster.parse(new StringReader(HEADER + rows));
@@ -31,7 +31,7 @@ class RosterTest {
     @Test
     void readsAnEffectRowWithBothTiers() throws IOException {
         InfusionSpec spec = parse("swift,Sunspire,effect,yes,,minecraft:speed,"
-                + "3xsunspire+3xskyclover,3,,1,10,2xsunspire+1xskyclover,5,,2,12\n").family("swift");
+                + "3xsunspire+3xskyclover,3,,1,10,2xsunspire+1xskyclover,5,,2,12,#808080\n").family("swift");
 
         assertEquals("Sunspire", spec.displayName());
         assertEquals(Kind.EFFECT, spec.kind());
@@ -59,7 +59,7 @@ class RosterTest {
     @Test
     void readsAModifierRowWithABonusAndAPenalty() throws IOException {
         InfusionSpec spec = parse("quick,Quickwater,modifier,no,somemod,,"
-                + "2xstreamreed+2xrainthistle,3,drink_speed:+0.50;healing:-0.20,,,,,,,\n").family("quick");
+                + "2xstreamreed+2xrainthistle,3,drink_speed:+0.50;healing:-0.20,,,,,,,,#808080\n").family("quick");
 
         assertEquals(Kind.MODIFIER, spec.kind());
         assertFalse(spec.unique());
@@ -75,35 +75,37 @@ class RosterTest {
 
     @Test
     void rejectsMalformedRows() {
-        assertRejected("a,A,effect,yes,,,1xp,1,,1,10,,,,,\n", "effect without an effect id");
-        assertRejected("a,A,modifier,yes,,minecraft:speed,1xp,1,healing:+0.1,,,,,,,\n", "modifier with an effect id");
-        assertRejected("a,A,modifier,yes,,,1xp,1,charges:+1,,,,,,,\n", "unknown channel");
-        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1;healing:+0.2,,,,,,,\n", "repeated channel");
-        assertRejected("a,A,modifier,yes,,,pearl,1,healing:+0.1,,,,,,,\n", "plant without a count");
-        assertRejected("a,A,modifier,maybe,,,1xp,1,healing:+0.1,,,,,,,\n", "unique not yes or no");
-        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,0,10,,,,,\n", "level below 1");
-        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10,,5,,2,10\n", "Concentrated values without plants");
-        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10\n", "too few cells");
-        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10,,,,,\n"
-                + "a,B,effect,yes,,minecraft:haste,1xq,1,,1,10,,,,,\n", "repeated family");
-        assertRejected("a,A,effect,yes,,speed:,1xp,1,,1,10,,,,,\n", "effect id without a name");
-        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,healing:+0.1,1,10,,,,,\n", "effect with bonuses");
-        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1,1,,,,,,\n", "modifier with a level");
-        assertRejected("a,A,modifier,yes,,,1xp,1,,,,,,,,\n", "modifier without bonuses");
-        assertRejected("a,A,modifier,yes,,,1xp,1,healing:0,,,,,,,\n", "zero bonus");
-        assertRejected("a,A,modifier,yes,,,1xp,1,healing:NaN,,,,,,,\n", "bonus that is not a number");
-        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1;,,,,,,,\n", "trailing bonus separator");
-        assertRejected("a,A,modifier,yes,,,1xp+,1,healing:+0.1,,,,,,,\n", "trailing plant separator");
-        assertRejected("a,A,modifier,yes,,,0xp,1,healing:+0.1,,,,,,,\n", "plant count below 1");
-        assertRejected("a,A,modifier,yes,,,1xp,-1,healing:+0.1,,,,,,,\n", "negative cost");
-        assertRejected("a,\"A\",modifier,yes,,,1xp,1,healing:+0.1,,,,,,,\n", "quoted cell");
+        assertRejected("a,A,effect,yes,,,1xp,1,,1,10,,,,,,#808080\n", "effect without an effect id");
+        assertRejected("a,A,modifier,yes,,minecraft:speed,1xp,1,healing:+0.1,,,,,,,,#808080\n", "modifier with an effect id");
+        assertRejected("a,A,modifier,yes,,,1xp,1,charges:+1,,,,,,,,#808080\n", "unknown channel");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1;healing:+0.2,,,,,,,,#808080\n", "repeated channel");
+        assertRejected("a,A,modifier,yes,,,pearl,1,healing:+0.1,,,,,,,,#808080\n", "plant without a count");
+        assertRejected("a,A,modifier,maybe,,,1xp,1,healing:+0.1,,,,,,,,#808080\n", "unique not yes or no");
+        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,0,10,,,,,,#808080\n", "level below 1");
+        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10,,5,,2,10,#808080\n", "Concentrated values without plants");
+        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10,#808080\n", "too few cells");
+        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,,1,10,,,,,,#808080\n"
+                + "a,B,effect,yes,,minecraft:haste,1xq,1,,1,10,,,,,,#808080\n", "repeated family");
+        assertRejected("a,A,effect,yes,,speed:,1xp,1,,1,10,,,,,,#808080\n", "effect id without a name");
+        assertRejected("a,A,effect,yes,,minecraft:speed,1xp,1,healing:+0.1,1,10,,,,,,#808080\n", "effect with bonuses");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1,1,,,,,,,#808080\n", "modifier with a level");
+        assertRejected("a,A,modifier,yes,,,1xp,1,,,,,,,,,#808080\n", "modifier without bonuses");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:0,,,,,,,,#808080\n", "zero bonus");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:NaN,,,,,,,,#808080\n", "bonus that is not a number");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1;,,,,,,,,#808080\n", "trailing bonus separator");
+        assertRejected("a,A,modifier,yes,,,1xp+,1,healing:+0.1,,,,,,,,#808080\n", "trailing plant separator");
+        assertRejected("a,A,modifier,yes,,,0xp,1,healing:+0.1,,,,,,,,#808080\n", "plant count below 1");
+        assertRejected("a,A,modifier,yes,,,1xp,-1,healing:+0.1,,,,,,,,#808080\n", "negative cost");
+        assertRejected("a,\"A\",modifier,yes,,,1xp,1,healing:+0.1,,,,,,,,#808080\n", "quoted cell");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1,,,,,,,,808080\n", "color without #");
+        assertRejected("a,A,modifier,yes,,,1xp,1,healing:+0.1,,,,,,,,#80808\n", "short color");
     }
 
     @Test
     void acceptsWindowsLineEndingsAndBlankLines() throws IOException {
         Roster roster = Roster.parse(new StringReader(HEADER.replace("\n", "\r\n")
-                + "a,A,modifier,no,,,1xp,1,healing:+0.1,,,,,,,\r\n\r\n"
-                + "b,B,modifier,no,,,1xq,1,healing:+0.2,,,,,,,\r\n"));
+                + "a,A,modifier,no,,,1xp,1,healing:+0.1,,,,,,,,#808080\r\n\r\n"
+                + "b,B,modifier,no,,,1xq,1,healing:+0.2,,,,,,,,#808080\r\n"));
         assertEquals(2, roster.specs().size());
         assertEquals(0.2, roster.family("b").values(Tier.STANDARD).bonuses().get(Channel.HEALING), 1e-9);
     }
@@ -169,6 +171,8 @@ class RosterTest {
         assertEquals(30, deepwater.values(Tier.STANDARD).seconds());
         assertEquals(60, deepwater.values(Tier.CONCENTRATED).seconds());
 
+        assertEquals(0xd9a23a, heartroot.color());
+        assertEquals(0xf2c22e, swiftness.color());
         assertEquals("potioncore", roster.family("canopy").requiresMod());
         assertEquals("jawmsadditions", roster.family("manabloom").requiresMod());
         assertNull(roster.family("frostguard").requiresMod());

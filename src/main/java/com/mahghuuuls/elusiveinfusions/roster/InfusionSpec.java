@@ -14,9 +14,10 @@ public final class InfusionSpec {
     private final String effectId;
     private final TierValues standard;
     private final TierValues concentrated;
+    private final int color;
 
     InfusionSpec(String family, String displayName, Kind kind, boolean unique, String requiresMod,
-                 String effectId, TierValues standard, TierValues concentrated) {
+                 String effectId, TierValues standard, TierValues concentrated, int color) {
         this.family = family;
         this.displayName = displayName;
         this.kind = kind;
@@ -25,6 +26,12 @@ public final class InfusionSpec {
         this.effectId = effectId;
         this.standard = standard;
         this.concentrated = concentrated;
+        this.color = color;
+    }
+
+    /** Fixed 0xRRGGBB accent color of the family's icon; never changes at run time. */
+    public int color() {
+        return color;
     }
 
     /** Stable id of the family; registry names are derived from it. */

@@ -22,14 +22,14 @@ class OptionalEffectsTest {
 
     private static final String HEADER = "family,display_name,kind,unique,requires_mod,effect_id,"
             + "std_plants,std_cost,std_bonuses,std_level,std_seconds,"
-            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds\n";
+            + "conc_plants,conc_cost,conc_bonuses,conc_level,conc_seconds,color\n";
 
     @Test
     void onlyEffectFamiliesWithAnUnregisteredEffectAreMissing() throws IOException {
         Roster roster = Roster.parse(new StringReader(HEADER
-                + "speedy,Speedy,effect,yes,,minecraft:speed,1xp,3,,1,10,,,,,\n"
-                + "climb,Climb,effect,yes,potioncore,potioncore:climb,1xq,2,,1,30,,,,,\n"
-                + "heart,Heart,modifier,yes,,,1xr,3,healing:+0.3,,,,,,,\n"));
+                + "speedy,Speedy,effect,yes,,minecraft:speed,1xp,3,,1,10,,,,,,#808080\n"
+                + "climb,Climb,effect,yes,potioncore,potioncore:climb,1xq,2,,1,30,,,,,,#808080\n"
+                + "heart,Heart,modifier,yes,,,1xr,3,healing:+0.3,,,,,,,,#808080\n"));
         final Set<String> registered = new HashSet<String>(Arrays.asList("minecraft:speed"));
 
         List<InfusionSpec> missing = OptionalEffects.missingEffects(roster.specs(), new OptionalEffects.EffectLookup() {
